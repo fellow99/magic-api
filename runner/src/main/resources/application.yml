@@ -1,0 +1,15 @@
+server:
+  port: 9999
+magic-api:
+  web: /magic/web
+  resource:
+    type: file
+    location: /tmp/magic-api-data
+#    type: database  # 配置接口存储方式，这里选择存在数据库中
+#    table-name: magic_api_file_v2  # 数据库中的表名
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/magic?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password:
