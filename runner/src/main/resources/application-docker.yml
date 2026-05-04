@@ -1,0 +1,13 @@
+server:
+  port: 9999
+magic-api:
+  web: /magic/web
+  resource:
+    type: file
+    location: /data
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://host.docker.internal:3306/magic?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password: 123456
