@@ -291,8 +291,8 @@ public class DefaultMagicResourceService implements MagicResourceService, JsonCo
 			if (groupResource.getResource(Constants.GROUP_METABASE).write(JsonUtils.toJsonString(group))) {
 				putGroup(group, groupResource);
 				TreeNode<Group> treeNode = tree(group.getType()).findTreeNode(it -> it.getId().equals(group.getId()));
-				// 刷新分组缓存
-				refreshGroup(groupResource, storage);
+				// 刷新父级目录缓存，确保所有同级分组正确缓存
+				refreshGroup(resource, storage);
 				if (event.getAction() != EventAction.CREATE) {
 					event.setEntities(treeNode
 							.flat()

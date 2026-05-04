@@ -111,6 +111,10 @@ public class IoUtils {
 
 	public static boolean write(File file, byte[] bytes) {
 		try {
+			File parent = file.getParentFile();
+			if (parent != null && !parent.exists()) {
+				Files.createDirectories(parent.toPath());
+			}
 			Files.write(file.toPath(), bytes);
 			return true;
 		} catch (IOException e) {
