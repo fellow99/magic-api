@@ -123,6 +123,7 @@ public class MagicEntity extends Attributes<Object> {
 		entity.setId(this.id);
 		entity.setName(this.name);
 		entity.setGroupId(this.groupId);
+		entity.setScript(this.script);
 		entity.setCreateBy(this.createBy);
 		entity.setCreateTime(this.createTime);
 		entity.setUpdateBy(this.updateBy);
