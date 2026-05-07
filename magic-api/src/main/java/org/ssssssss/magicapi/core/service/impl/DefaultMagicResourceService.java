@@ -240,10 +240,10 @@ public class DefaultMagicResourceService implements MagicResourceService, JsonCo
 				isTrue(resource != null && resource.exists(), GROUP_NOT_FOUND);
 			}
 			Resource groupResource;
-			GroupEvent event = new GroupEvent(group.getType(), group.getId() == null ? EventAction.CREATE : EventAction.SAVE, group);
-			if (group.getId() == null || !groupCache.containsKey(group.getId())) {
+			GroupEvent event = new GroupEvent(group.getType(), StringUtils.isBlank(group.getId()) ? EventAction.CREATE : EventAction.SAVE, group);
+			if (StringUtils.isBlank(group.getId()) || !groupCache.containsKey(group.getId())) {
 				// 添加分组
-				if (group.getId() == null) {
+				if (StringUtils.isBlank(group.getId())) {
 					group.setId(UUID.randomUUID().toString().replace("-", ""));
 				}
 				group.setCreateTime(System.currentTimeMillis());
@@ -508,7 +508,7 @@ public class DefaultMagicResourceService implements MagicResourceService, JsonCo
 		notBlank(entity.getName(), NAME_REQUIRED);
 		isTrue(IoUtils.validateFileName(entity.getName()), NAME_INVALID);
 		return writeLock(() -> {
-			EventAction action = entity.getId() == null || !fileCache.containsKey(entity.getId()) ? EventAction.CREATE : EventAction.SAVE;
+			EventAction action = StringUtils.isBlank(entity.getId()) || !fileCache.containsKey(entity.getId()) ? EventAction.CREATE : EventAction.SAVE;
 			// 获取所在分组
 			Resource groupResource = getGroupResource(entity.getGroupId());
 			// 分组需要存在
@@ -538,10 +538,10 @@ public class DefaultMagicResourceService implements MagicResourceService, JsonCo
 			// 获取修改前的信息
 			Resource fileResource = groupResource.getResource(filename);
 			if (action == EventAction.CREATE) {
-				if (entity.getId() == null) {
-					isTrue(!fileResource.exists(), FILE_SAVE_FAILURE);
-					// 新增操作赋值
-					entity.setId(UUID.randomUUID().toString().replace("-", ""));
+			if (StringUtils.isBlank(entity.getId())) {
+				isTrue(!fileResource.exists(), FILE_SAVE_FAILURE);
+				// 新增操作赋值
+				entity.setId(UUID.randomUUID().toString().replace("-", ""));
 				}
 				entity.setCreateTime(System.currentTimeMillis());
 				entity.setCreateBy(WebUtils.currentUserName());
