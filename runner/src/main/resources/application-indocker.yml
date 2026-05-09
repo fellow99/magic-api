@@ -5,6 +5,9 @@ magic-api:
   resource:
     type: database
     table-name: magic_api_file_v2
+  backup:
+    enable: true
+    table-name: magic_backup_record_v2
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
