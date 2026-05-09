@@ -675,14 +675,17 @@ public class DefaultMagicResourceService implements MagicResourceService, JsonCo
 			root.export(os);
 		} else {
 			ZipOutputStream zos = new ZipOutputStream(os);
+			Set<String> writtenDirs = new HashSet<>();
 			for (SelectedResource item : resources) {
 				if ("root".equals(item.getType())) {
-					zos.putNextEntry(new ZipEntry(item.getId() + "/"));
+					String rootPath = item.getId() + "/";
+					writeAncestorDirs(zos, rootPath, writtenDirs);
+					Resource resource = root.getDirectory(item.getId());
+					resource.processExport(zos, rootPath, resource, resource.resources(), Collections.emptyList());
 				} else if ("group".equals(item.getType())) {
 					Resource resource = getGroupResource(item.getId());
 					notNull(resource, GROUP_NOT_FOUND);
-					zos.putNextEntry(new ZipEntry(resource.getFilePath()));
-					zos.closeEntry();
+					writeAncestorDirs(zos, resource.getFilePath(), writtenDirs);
 					resource = resource.getResource(Constants.GROUP_METABASE);
 					zos.putNextEntry(new ZipEntry(resource.getFilePath()));
 					zos.write(resource.read());
@@ -694,6 +697,7 @@ public class DefaultMagicResourceService implements MagicResourceService, JsonCo
 					Resource groupResource = groupMappings.get(entity.getGroupId());
 					Group group = groupCache.get(entity.getGroupId());
 					MagicResourceStorage<? extends MagicEntity> storage = storages.get(group.getType());
+					writeAncestorDirs(zos, groupResource.getFilePath(), writtenDirs);
 					zos.putNextEntry(new ZipEntry(groupResource.getFilePath() + entity.getName() + storage.suffix()));
 					zos.write(resource.read());
 					zos.closeEntry();
@@ -701,6 +705,18 @@ public class DefaultMagicResourceService implements MagicResourceService, JsonCo
 			}
 			zos.flush();
 			zos.close();
+		}
+	}
+
+	private static void writeAncestorDirs(ZipOutputStream zos, String dirPath, Set<String> writtenDirs) throws IOException {
+		int idx = dirPath.indexOf('/');
+		while (idx != -1) {
+			String ancestor = dirPath.substring(0, idx + 1);
+			if (writtenDirs.add(ancestor)) {
+				zos.putNextEntry(new ZipEntry(ancestor));
+				zos.closeEntry();
+			}
+			idx = dirPath.indexOf('/', idx + 1);
 		}
 	}
 
