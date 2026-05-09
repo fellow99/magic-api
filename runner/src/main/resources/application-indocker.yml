@@ -3,8 +3,8 @@ server:
 magic-api:
   web: /magic/web
   resource:
-    type: database
-    table-name: magic_api_file_v2
+    type: file
+    location: /data
   backup:
     enable: true
     table-name: magic_backup_record_v2
